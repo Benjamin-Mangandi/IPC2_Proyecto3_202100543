@@ -5,3 +5,4 @@ class Cliente:
         self.saldo = 0
         self.transacciones = []
         self.pagos = []
+        self.saldo = 0
