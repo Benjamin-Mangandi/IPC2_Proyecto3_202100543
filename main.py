@@ -15,9 +15,6 @@ FacturasRegistradas = []
 PagosRegistrados = []
 
 
-@app.route('/')
-def inicio():
-    return 'Menu principal'
 
 @app.route('/limpiarDatos', methods=["POST"])
 def reinicio():
@@ -35,7 +32,7 @@ def reinicio():
     }
     return jsonify(respuesta)
 
-@app.route('/guardarTransaccion', methods=["POST"])
+@app.route('/transaccion/guardarTransaccion', methods=["POST"])
 def guardar_transaccion():
     global ClientesRegistrados
     global FacturasRegistradas
@@ -129,7 +126,7 @@ def guardar_transaccion():
     xml_response = ET.tostring(respuesta, encoding='utf8', method='xml').decode('utf-8')
     return Response(xml_response, mimetype='application/xml')
 
-@app.route('/guardarConfiguracion', methods=["POST"])
+@app.route('/configuracion/guardarConfiguracion', methods=["POST"])
 def guardar_configuracion():
     global ClientesRegistrados
     global BancosRegistrados
@@ -137,9 +134,9 @@ def guardar_configuracion():
     ClientesActualizados = []
     BancosCreados = []
     BancosActualizados = []
-    xml_data = request.data
+    contenido = request.data
     try:
-        raiz = ET.fromstring(xml_data)
+        raiz = ET.fromstring(contenido)
     except ET.ParseError:
         return Response("Error al analizar XML", status=400)
     clientes = raiz.find('clientes')

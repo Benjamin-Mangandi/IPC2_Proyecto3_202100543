@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css"
+  >
+    <meta charset="UTF-8">
+    <title>Industria Típica Guatemalteca, S.A.</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+    // Captura el evento click del botón de reiniciar datos
+    document.getElementById('btn-reiniciar-datos').addEventListener('click', function (event) {
+        // Muestra una ventana de confirmación
+        var confirmar = confirm('¿Estás seguro de que quieres reiniciar los datos?\nEsta acción no se puede deshacer.');
+        
+        // Si el usuario confirma, envía el formulario
+        if (!confirmar) {
+            event.preventDefault(); // Evita el envío del formulario si el usuario cancela
+        }
+    });
+});
+    </script>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        body, html {
+            height: 100%;
+            margin: 0;
+            background-color: #001a4d;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .button.is-primary.is-dark{
+            width: 300px; /* Ancho del botón */
+            height: 50px; /* Altura del botón */
+            font-size: 18px; /* Tamaño de la fuente del botón */
+        }
+
+        .button.is-info.is-dark{
+            width: 300px; /* Ancho del botón */
+            height: 50px; /* Altura del botón */
+            font-size: 18px; /* Tamaño de la fuente del botón */
+        }
+
+        .button.is-danger{
+            width: 300px; /* Ancho del botón */
+            height: 50px; /* Altura del botón */
+            font-size: 18px; /* Tamaño de la fuente del botón */
+        }
+
+        .title.is-2{
+            color: #00cc00;
+            font-style: italic;
+        }
+        .title.is-4{
+            color: hsl(348, 100%, 61%);
+        }
+        form, .block {
+            margin-top: 20px;
+            justify-content:  center;
+        }
+        label, input, button {
+            margin: 8px;
+            color: yellow;
+        }
+        #notification {
+            display: none;
+            color: green;
+        }
+        .block:not(:last-child) {
+  margin-bottom: 1rem;
+}
+div.block div {
+    margin-bottom: 20px; /* Espacio entre cada botón */
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="block">
+            <h2 class="title is-2">Industria Típica Guatemalteca, S.A.</h2>
+            <h4 class="title is-4">Acciones Disponibles:</h4>
+        </div>
+        <div class="block">
+            <form id="form-configuracion" action="/configuracion" method="post">
+            <div>
+                <button type="save_data" class="button is-primary is-dark">Cargar Archivo de Configuración</button>
+            </div>
+            </form>
+            <form id="form-configuracion" action="/transaccion" method="post">
+            <div>
+                <button type="save_transfer" class="button is-primary is-dark">Cargar Archivo de Transacciones</button>
+            </div>
+        </form>   
+            <div>
+                <button type="get_state" class="button is-info is-dark">Ver Estado de Cuenta</button>
+            </div>
+            <div>
+                <button type="get_graph" class="button is-info is-dark">Ver Resumen de Pagos</button>
+            </div>
+            <div>
+                <form id="form-limpiar-datos" action="/limpiarDatos" method="post">
+                    <button id="btn-reiniciar-datos" type="submit" class="button is-danger">Reiniciar Datos Cargados</button>
+                </form>                
+            </div>
+        </div>
+</body>
+</html>
