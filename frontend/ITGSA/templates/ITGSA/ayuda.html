@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
+        <meta charset="UTF-8">
+        <title>Ayuda</title>
+        <script>
+        </script>
+        <style>
+            .container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                width: 100%;
+            }
+            body,
+            html {
+                height: 100%;
+                margin: 0;
+                background-color: #001a4d;
+                color: white;
+                display: flex;
+                justify-content: center;
+                align-items: flex-start;
+            }
+
+            .button.is-primary.is-dark {
+                width: 300px;
+                height: 50px;
+                font-size: 18px;
+            }
+
+            .button.is-info.is-dark {
+                width: 300px;
+                height: 50px;
+                font-size: 18px;
+            }
+
+            .button.is-danger {
+                width: 300px;
+                /* Ancho del botón */
+                height: 50px;
+                /* Altura del botón */
+                font-size: 18px;
+                /* Tamaño de la fuente del botón */
+            }
+
+            .title.is-2 {
+                color: #00cc00;
+                font-style: italic;
+            }
+            .title.is-4 {
+                color: hsl(348, 100%, 61%);
+            }
+            .block,
+            form {
+                margin-top: 20px;
+                justify-content: center;
+            }
+            button,
+            input,
+            label {
+                margin: 8px;
+                color: yellow;
+            }
+            #notification {
+                display: none;
+                color: green;
+            }
+            .block:not(:last-child) {
+                margin-bottom: 1rem;
+            }
+            div.block div {
+                margin-bottom: 20px;
+                /* Espacio entre cada botón */
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="block">
+                <h2 class="title is-2">Datos del estudiante:</h2>
+                <h4 class="title is-4">Nombre: Harold Benjamin Oxlaj Mangandi</h4>
+                <h4 class="title is-4">Carnet: 202100543</h4>
+            </div>
+            <div class="block">
+                <form id="form-configuracion" action="/configuracion" method="post">
+                    <div>
+                        <a href="https://github.com/Benjamin-Mangandi/IPC2_Proyecto3_202100543.git" type="documentacion" target="_blank" class="button is-primary is-dark">Ver Documentación</a>
+                    </div>
+                </form>
+                <div>
+                    <a href="/" class="button is-info is-dark">Volver al Menu Inicial</a>
+                </div>
+            </div>
+        </body>
+    </html>

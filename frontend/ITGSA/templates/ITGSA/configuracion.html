@@ -1,124 +1,146 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css"
-  >
-    <meta charset="UTF-8">
-    <title>Configuración</title>
-    <script>
-       function actualizarNombreArchivo(input) {
-    const nombreArchivo = input.files[0].name;
-    const fileSpan = input.parentNode.querySelector('.file-name');
-    fileSpan.textContent = nombreArchivo;
-}
+    <head>
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
+        <meta charset="UTF-8">
+        <title>Configuración</title>
+        <script>
+            function actualizarNombreArchivo(input) {
+                const nombreArchivo = input
+                    .files[0]
+                    .name;
+                const fileSpan = input
+                    .parentNode
+                    .querySelector('.file-name');
+                fileSpan.textContent = nombreArchivo;
+            }
 
-function habilitarBotonEnviar(input) {
-    const botonEnviar = document.getElementById('boton_enviar');
-    botonEnviar.disabled = !input.files[0]; // Deshabilita el botón si no hay archivo seleccionado
-}
-    </script>
-    <style>
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-        }
-        body, html {
-            height: 100%;
-            margin: 0;
-            background-color: #001a4d;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-        }
+            function habilitarBotonEnviar(input) {
+                const botonEnviar = document.getElementById('boton_enviar');
+                botonEnviar.disabled = !input.files[0]; // Deshabilita el botón si no hay archivo seleccionado
+            }
+        </script>
+        <style>
+            .container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                width: 100%;
+            }
+            body,
+            html {
+                height: 100%;
+                margin: 0;
+                background-color: #001a4d;
+                color: white;
+                display: flex;
+                justify-content: center;
+                align-items: flex-start;
+            }
 
-        .button.is-primary.is-dark{
-            width: 300px; /* Ancho del botón */
-            height: 50px; /* Altura del botón */
-            font-size: 18px; /* Tamaño de la fuente del botón */
-        }
+            .button.is-primary.is-dark {
+                width: 300px;
+                /* Ancho del botón */
+                height: 50px;
+                /* Altura del botón */
+                font-size: 18px;
+                /* Tamaño de la fuente del botón */
+            }
 
-        .button.is-info.is-dark{
-            width: 300px; /* Ancho del botón */
-            height: 50px; /* Altura del botón */
-            font-size: 18px; /* Tamaño de la fuente del botón */
-        }
+            .button.is-info.is-dark {
+                width: 300px;
+                /* Ancho del botón */
+                height: 50px;
+                /* Altura del botón */
+                font-size: 18px;
+                /* Tamaño de la fuente del botón */
+            }
 
-        .button.is-danger{
-            width: 300px; /* Ancho del botón */
-            height: 50px; /* Altura del botón */
-            font-size: 18px; /* Tamaño de la fuente del botón */
-            justify-content: center;
-  align-items: center;
-        }
+            .button.is-danger {
+                width: 150px;
+                height: 50px;
+                font-size: 18px;
+                position: fixed;
+                top: 10px;
+                right: 10px;
+            }
 
-        .title.is-2{
-            color: #00cc00;
-            font-style: italic;
-        }
-        .title.is-4{
-            color: hsl(348, 100%, 61%);
-            justify-content:  center;
-            text-align: center;
-        }
-        form, .block {
-            margin-top: 20px;
-            justify-content:  center;
-        }
-        label, input, button {
-            margin: 8px;
-            color: yellow;
-        }
-        #notification {
-            display: none;
-            color: green;
-        }
-        .block:not(:last-child) {
-  margin-bottom: 1rem;
-}
-div.block div {
-    margin-bottom: 20px; /* Espacio entre cada botón */
-}
-
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="block">
-            <h2 class="title is-2">Carga de Clientes y Bancos</h2>
-        </div>
-        <div class="block">
-            <div>
-                <form action="/configuracion/guardarConfiguracion" method="post" enctype="multipart/form-data">
-                    <div class="file is-centered is-boxed is-success has-name">
-                        <label class="file-label">
-                          <input class="file-input" type="file" name="Archivo_configuracion" onchange="actualizarNombreArchivo(this); habilitarBotonEnviar(this);" />
-                          <span class="file-cta">
-                            <span class="file-icon">
-                              <i class="fas fa-upload"></i>
-                            </span>
-                            <span class="file-label"> Subir Archivo </span>
-                          </span>
-                          <span class="file-name"></span>
-                        </label>
-                      </div>
-                    <button id="boton_enviar"  type="submit" class="button is-info is-dark" disabled>Enviar</button>
-                </form>              
+            .title.is-2 {
+                color: #00cc00;
+                font-style: italic;
+            }
+            .title.is-4 {
+                color: hsl(348, 100%, 61%);
+                justify-content: center;
+                text-align: center;
+            }
+            .block,
+            form {
+                margin-top: 20px;
+                justify-content: center;
+            }
+            button,
+            input,
+            label {
+                margin: 8px;
+                color: yellow;
+            }
+            #notification {
+                display: none;
+                color: green;
+            }
+            .block:not(:last-child) {
+                margin-bottom: 1rem;
+            }
+            div.block div {
+                margin-bottom: 20px;
+                /* Espacio entre cada botón */
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="block">
+                <h2 class="title is-2">Carga de Clientes y Bancos</h2>
             </div>
-        </div>
-        <div class="block">
-            <h4 class="title is-4">Respuesta:</h4>
-            <textarea readonly
-  class="textarea is-warning"
-  rows="16"
-  cols="50"
-> {{ respuesta_xml | safe }}</textarea>
-        </div>
-        <a href="/" class="button is-danger">Volver al inicio</a>
-        </div>
-</body>
-</html>
+            <div class="block">
+                <div>
+                    <form
+                        action="/configuracion/guardarConfiguracion"
+                        method="post"
+                        enctype="multipart/form-data">
+                        <div class="file is-centered is-boxed is-success has-name">
+                            <label class="file-label">
+                                <input
+                                    class="file-input"
+                                    type="file"
+                                    name="Archivo_configuracion"
+                                    onchange="actualizarNombreArchivo(this); habilitarBotonEnviar(this);"/>
+                                <span class="file-cta">
+                                    <span class="file-icon">
+                                        <i class="fas fa-upload"></i>
+                                    </span>
+                                    <span class="file-label">
+                                        Subir Archivo
+                                    </span>
+                                </span>
+                                <span class="file-name"></span>
+                            </label>
+                        </div>
+                        <button
+                            id="boton_enviar"
+                            type="submit"
+                            class="button is-info is-dark"
+                            disabled="disabled">Enviar</button>
+                    </form>
+                </div>
+            </div>
+            <div class="block">
+                <h4 class="title is-4">Respuesta:</h4>
+                <textarea readonly="readonly" class="textarea is-warning" rows="14" cols="50">
+                    {{ respuesta_xml | safe }}</textarea>
+                <a href="/" class="button is-danger">Volver al inicio</a>
+            </body>
+        </html>

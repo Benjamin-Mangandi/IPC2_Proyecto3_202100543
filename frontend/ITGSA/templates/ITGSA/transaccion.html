@@ -49,9 +49,12 @@ function habilitarBotonEnviar(input) {
         }
 
         .button.is-danger{
-            width: 300px; /* Ancho del botón */
-            height: 50px; /* Altura del botón */
-            font-size: 18px; /* Tamaño de la fuente del botón */
+            width: 150px;
+                height: 50px;
+                font-size: 18px;
+                position: fixed;
+                top: 10px;
+                right: 10px;
         }
 
         .title.is-2{
@@ -60,6 +63,12 @@ function habilitarBotonEnviar(input) {
         }
         .title.is-4{
             color: hsl(348, 100%, 61%);
+            justify-content:  center;
+            text-align: center;
+        }
+        .file-label{
+            color: black;
+            width: 200px;
             justify-content:  center;
             text-align: center;
         }
@@ -112,11 +121,9 @@ div.block div {
             <h4 class="title is-4">Respuesta:</h4>
             <textarea readonly
   class="textarea is-warning"
-  rows="16"
+  rows="14"
   cols="50"
 > {{ respuesta_xml | safe }}</textarea>
-        </div>
         <a href="/" class="button is-danger">Volver al inicio</a>
-        </div>
 </body>
 </html>

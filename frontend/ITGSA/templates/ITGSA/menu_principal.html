@@ -102,14 +102,18 @@ div.block div {
             </div>
         </form>   
             <div>
-                <button type="get_state" class="button is-info is-dark">Ver Estado de Cuenta</button>
-            </div>
-            <div>
-                <button type="get_graph" class="button is-info is-dark">Ver Resumen de Pagos</button>
+                <form id="form-limpiar-datos" action="/clientes" method="post">
+                <button type="get_state" class="button is-info is-dark">Ver Estados de Cuentas</button>
+            </form>
             </div>
             <div>
                 <form id="form-limpiar-datos" action="/limpiarDatos" method="post">
                     <button id="btn-reiniciar-datos" type="submit" class="button is-danger">Reiniciar Datos Cargados</button>
+                </form>                
+            </div>
+            <div>
+                <form  action="/Ayuda" method="post">
+                    <button type="submit" class="button is-danger">AYUDA</button>
                 </form>                
             </div>
         </div>
