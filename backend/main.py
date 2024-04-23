@@ -16,14 +16,49 @@ FacturasRegistradas = []
 PagosRegistrados = []
 
 
+
 def verificar_y_crear_archivos():
-    archivos = [os.path.join('./backend',"db.clientes.xml"), os.path.join('./backend',"db.transacciones.xml")]
+    directorio = './backend'
+    archivos = [os.path.join(directorio, "db.clientes.xml"), os.path.join(directorio, "db.transacciones.xml")]
+
     for archivo in archivos:
         if not os.path.exists(archivo):
             print(f"\nEl archivo {archivo} no existe, creando...")
-            with open(archivo, "w") as file:
+            root = ET.Element("Base_Datos")
+            tree = ET.ElementTree(root)
+            if 'clientes' in archivo:
+                ET.SubElement(root, 'clientes')
+                ET.SubElement(root, 'bancos')
+            elif 'transacciones' in archivo:
+                ET.SubElement(root, 'facturas')
+                ET.SubElement(root, 'pagos')
+            tree.write(archivo)
+        else:
+            tree = ET.parse(archivo)
+            root = tree.getroot()
+            updated = False
+            if 'clientes' in archivo:
+                if root.find('clientes') is None:
+                    ET.SubElement(root, 'clientes')
+                    updated = True
+                if root.find('bancos') is None:
+                    ET.SubElement(root, 'bancos')
+                    updated = True
+            elif 'transacciones' in archivo:
+                if root.find('facturas') is None:
+                    ET.SubElement(root, 'facturas')
+                    updated = True
+                if root.find('pagos') is None:
+                    ET.SubElement(root, 'pagos')
+                    updated = True
+            if updated:
+                tree.write(archivo)
+
+def limpiar_contenido_xml(*nombres_archivos):
+    for nombre_archivo in nombres_archivos:
+        if os.path.exists(nombre_archivo):
+            with open(nombre_archivo, 'w') as file:
                 file.write('<?xml version="1.0" encoding="UTF-8"?>\n')
-            print(f"\nArchivo {archivo} creado.")
 
 
 @app.route("/limpiarDatos", methods=["POST"])
@@ -36,6 +71,7 @@ def reinicio():
     BancosRegistrados = []
     FacturasRegistradas = []
     PagosRegistrados = []
+    limpiar_contenido_xml("backend/db.clientes.xml","backend/db.transacciones.xml")
     respuesta = {"msg": "Se Reinició la Aplicación correctamente", 
                  "status": 200}
     return jsonify(respuesta)
@@ -201,13 +237,10 @@ def devolver_estado_cuenta(nit):
             return jsonify(cliente.parseDiccionario())
 
 
-@app.route("/devolverEstadoCuentas", methods=["GET"])
+@app.route("/EstadosCuentas", methods=["GET"])
 def devolver_estado_cuentas():
     global ClientesRegistrados
-    for cliente in ClientesRegistrados:
-        print(cliente.nombre)
-    respuesta = {"nombre": cliente.nombre, "status": 200}
-    return jsonify(respuesta)
+    return jsonify([cliente.parseDiccionario() for cliente in ClientesRegistrados])
 
 
 @app.route("/devolverResumenPagos", methods=["GET"])

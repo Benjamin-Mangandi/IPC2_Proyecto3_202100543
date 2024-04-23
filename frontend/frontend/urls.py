@@ -29,7 +29,7 @@ urlpatterns = [
     path('transaccion/guardarTransaccion', views.guardar_transaccion, name='guardar_transaccion'),
     path('Ayuda', views.ayuda, name='ayuda'),
     path('clientes', views.clientes, name='clientes'),
-    path('estado_cuenta/', views.estado_cuenta, name='estado_cuenta')
-
+    path('estado_cuenta/', views.estado_cuenta, name='estado_cuenta'),
+    path('EstadosCuenta', views.EstadosCuenta, name='EstadosCuenta')
 ]
 

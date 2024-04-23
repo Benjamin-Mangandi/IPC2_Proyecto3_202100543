@@ -26,6 +26,7 @@ def clientes(request):
 def ayuda(request):
     return render(request, 'ITGSA/ayuda.html')
 
+
 @csrf_exempt
 def reiniciar_datos(request):
     if request.method == 'POST':
@@ -45,9 +46,20 @@ def estado_cuenta(request):
             cliente = response.json()
             return render(request, 'ITGSA/estado_cuenta.html', {'cliente': cliente})
         else:
-            return HttpResponse("Cliente no encontrado", status=404)
+            return render(request, 'ITGSA/cliente_inexistente.html')
     else:
         return render(request, 'ITGSA/clientes.html')
+    
+def EstadosCuenta(request):
+    if request.method == 'GET':
+        response = requests.get(f'http://localhost:8880/EstadosCuentas')
+        if response.status_code == 200:
+            Clientes = response.json()
+            return render(request, 'ITGSA/EstadosCuenta.html', {'Clientes': Clientes})
+        else:
+            return JsonResponse({'error': 'Método no permitido', 'status': 405})
+    
+
 
 @csrf_exempt
 def guardar_configuracion(request):
@@ -57,7 +69,7 @@ def guardar_configuracion(request):
         flask_endpoint = 'http://localhost:8880/configuracion/guardarConfiguracion'
         response = requests.post(flask_endpoint, data=archivo.read(), headers={'Content-Type': 'text/xml'})
         parseado_string = parseString(response.content)
-        xml_formateado = parseado_string.toprettyxml(indent= "        ")
+        xml_formateado = parseado_string.toprettyxml(indent= "      ")
         return render(request,'ITGSA/configuracion.html',{
             "respuesta_xml": xml_formateado
         } )
@@ -73,7 +85,7 @@ def guardar_transaccion(request):
         flask_endpoint = 'http://localhost:8880/transaccion/guardarTransaccion'
         response = requests.post(flask_endpoint, data=archivo.read(), headers={'Content-Type': 'text/xml'})
         parseado_string = parseString(response.content)
-        xml_formateado = parseado_string.toprettyxml(indent= "        ")
+        xml_formateado = parseado_string.toprettyxml(indent= "      ")
         return render(request,'ITGSA/transaccion.html',{
             "respuesta_xml": xml_formateado
         } )
