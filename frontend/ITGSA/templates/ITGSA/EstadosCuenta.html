@@ -11,8 +11,11 @@
   crossorigin="anonymous">
     <meta charset="UTF-8">
     <title>Estado de Cuenta</title>
-    <script>
-    </script>
+    <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script
+    src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
     <style>
         .container {
             display: flex;
@@ -30,10 +33,13 @@
             align-items: flex-start;
         }
 
-        .button.is-primary.is-dark{
-            width: 300px; /* Ancho del botón */
-            height: 50px; /* Altura del botón */
-            font-size: 18px; /* Tamaño de la fuente del botón */
+        .button.is-primary.is-rounded{
+            width: 150px;
+                height: 50px;
+                font-size: 18px;
+                position: fixed;
+                top: 70px;
+                right: 5px;
         }
 
         .button.is-info.is-dark{
@@ -45,13 +51,15 @@
             top: 140px;
         }
 
-        .button.is-danger{
-            width: 150px;
-            height: 50px;
-            font-size: 18px;
-            position: fixed;
-            top: 10px;
-            right: 10px;
+        .button.is-danger.is-rounded{
+            background-color:  #e60000;
+                color: white;
+                width: 150px;
+                height: 50px;
+                font-size: 18px;
+                position: fixed;
+                top: 10px;
+                right: 10px;
         }
 
         .title.is-2{
@@ -84,8 +92,8 @@ div.block div {
     </style>
 </head>
 <body>
-    {% for cliente in Clientes %}
-    <div class="container">
+    <div id="contenido-pdf" class="container">
+        {% for cliente in Clientes %}
         <div class="block">
             <h2 class="title is-2">Estado de Cuenta</h2>
             <h5 class="title is-5">Nombre: {{cliente.nombre}}</h5>
@@ -126,6 +134,52 @@ div.block div {
               </table>
         </div>
         {% endfor %}
-        <a href="/" class="button is-danger">Volver al inicio</a>
+    </div>
+    <a href="/" class="button is-danger is-rounded">Volver al inicio</a>
+    <button id="download-pdf" class="button is-primary is-rounded">Descargar PDF</button>
+    <script>
+        window.onload = function () {
+            document
+                .getElementById('download-pdf')
+                .addEventListener('click', function () {
+                    const content = document.getElementById('contenido-pdf');
+                    const {jsPDF} = window.jspdf;
+                    html2canvas(content, {
+                        scale: 2,
+                        useCORS: true,
+                        logging: true
+                    })
+                        .then(canvas => {
+                            var imgData = canvas.toDataURL('image/png');
+                            var doc = new jsPDF({orientation: 'p', unit: 'pt', format: 'a4'});
+                            var pdfWidth = doc
+                                .internal
+                                .pageSize
+                                .getWidth();
+                            var pdfHeight = doc
+                                .internal
+                                .pageSize
+                                .getHeight();
+                            var imgWidth = canvas.width;
+                            var imgHeight = canvas.height;
+                            var widthRatio = pdfWidth / imgWidth;
+                            var heightRatio = pdfHeight / imgHeight;
+                            var ratio = Math.min(widthRatio, heightRatio);
+
+                            var newWidth = imgWidth * ratio;
+                            var newHeight = imgHeight * ratio;
+
+                            var startX = (pdfWidth - newWidth) / 2; // Centrar horizontalmente
+                            var startY = 0
+
+                            doc.addImage(imgData, 'PNG', startX, startY, newWidth, newHeight);
+                            doc.save('estados_de_cuentas.pdf');
+                        })
+                        .catch(error => {
+                            console.error('Error al capturar el contenido para PDF:', error);
+                        });
+                });
+        };
+    </script>
 </body>
 </html>

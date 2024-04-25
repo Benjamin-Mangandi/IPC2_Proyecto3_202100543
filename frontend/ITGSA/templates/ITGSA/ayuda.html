@@ -6,53 +6,48 @@
             href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
         <meta charset="UTF-8">
         <title>Ayuda</title>
-        <script>
-        </script>
+        <script></script>
         <style>
             .container {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
+                justify-content: center;
                 width: 100%;
+                max-width: 600px;
+                text-align: center;
             }
             body,
             html {
                 height: 100%;
                 margin: 0;
-                background-color: #001a4d;
+                background: linear-gradient(to bottom, #0d0d0d 0%, #003399 100%);
                 color: white;
                 display: flex;
                 justify-content: center;
-                align-items: flex-start;
+                align-items: center;
             }
 
-            .button.is-primary.is-dark {
+            .button.is-primary.is-rounded {
                 width: 300px;
                 height: 50px;
                 font-size: 18px;
             }
 
-            .button.is-info.is-dark {
+            .button.is-link.is-rounded {
                 width: 300px;
                 height: 50px;
                 font-size: 18px;
-            }
-
-            .button.is-danger {
-                width: 300px;
-                /* Ancho del botón */
-                height: 50px;
-                /* Altura del botón */
-                font-size: 18px;
-                /* Tamaño de la fuente del botón */
             }
 
             .title.is-2 {
-                color: #00cc00;
+                color: #ff6600;
+                text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
                 font-style: italic;
             }
             .title.is-4 {
                 color: hsl(348, 100%, 61%);
+                text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
             }
             .block,
             form {
@@ -63,18 +58,13 @@
             input,
             label {
                 margin: 8px;
-                color: yellow;
             }
-            #notification {
-                display: none;
-                color: green;
-            }
+
             .block:not(:last-child) {
                 margin-bottom: 1rem;
             }
             div.block div {
                 margin-bottom: 20px;
-                /* Espacio entre cada botón */
             }
         </style>
     </head>
@@ -88,12 +78,17 @@
             <div class="block">
                 <form id="form-configuracion" action="/configuracion" method="post">
                     <div>
-                        <a href="https://github.com/Benjamin-Mangandi/IPC2_Proyecto3_202100543.git" type="documentacion" target="_blank" class="button is-primary is-dark">Ver Documentación</a>
+                        <a
+                            href="https://github.com/Benjamin-Mangandi/IPC2_Proyecto3_202100543.git"
+                            type="documentacion"
+                            target="_blank"
+                            class="button is-primary is-rounded">Ver Documentación</a>
                     </div>
                 </form>
                 <div>
-                    <a href="/" class="button is-info is-dark">Volver al Menu Inicial</a>
+                    <a href="/" class="button is-link is-rounded">Volver al Menu Inicial</a>
                 </div>
             </div>
-        </body>
-    </html>
+        </div>
+    </body>
+</html>

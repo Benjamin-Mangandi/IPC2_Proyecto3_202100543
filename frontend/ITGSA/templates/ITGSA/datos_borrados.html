@@ -1,39 +1,49 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css"
-  >
-    <meta charset="UTF-8">
-    <title>Datos Borrados</title>
-    <style>
-       body, html {
-            height: 100%;
-            margin: 0;
-            background-color: #001a4d;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start; 
-        }
-        .container {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        .title.is-3{
-            color: red;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h3 class="title is-3">LOS DATOS HAN SIDO ELIMINADOS DE LA BASE DE DATOS</h3>
-        <p>Por Favor. Vuelva a cargar sus Archivos XML con los datos requeridos.</p>
-        <a href="/" class="button is-danger">Volver al inicio</a>
-    </div>
-</body>
+    <head>
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
+        <meta charset="UTF-8">
+        <title>Datos Borrados</title>
+        <style>
+            body,
+            html {
+                height: 100%;
+                margin: 0;
+                background: linear-gradient(to bottom, #0d0d0d 0%, #003399 100%);
+                color: white;
+                display: flex;
+                justify-content: center;
+                align-items: flex-start;
+            }
+            .container {
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+            .title.is-3 {
+                color: red;
+            }
+            .button.is-danger.is-rounded {
+                width: 300px;
+                height: 50px;
+                font-size: 18px;
+                background-color: red;
+                color: white;
+            }
+            .title.is-5 {
+                color: white;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h3 class="title is-3">LOS DATOS HAN SIDO ELIMINADOS DE LA BASE DE DATOS</h3>
+            <h5 class="title is-5">Por Favor. Vuelva a cargar sus Archivos XML con los datos requeridos.</h5>
+            <a href="/" class="button is-danger is-rounded">Volver al inicio</a>
+        </div>
+    </body>
 </html>
