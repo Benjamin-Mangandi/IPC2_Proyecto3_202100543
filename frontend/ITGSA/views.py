@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import JsonResponse
 import xml.etree.ElementTree as ET
+import json
 import requests
 from django.views.decorators.csrf import csrf_exempt
 from xml.dom.minidom import parseString
@@ -92,3 +93,16 @@ def guardar_transaccion(request):
     else:
         # Método no permitido
         return JsonResponse({'error': 'Método no permitido', 'status': 405})
+    
+@csrf_exempt
+def resumen_pagos(request, nit):
+    if request.method == 'GET':
+        fecha = request.GET.get('mes-año', None)
+        response = requests.get(f'http://localhost:8880/estado_cuenta/{nit}/ResumenPago/{fecha}')
+        data = response.json()
+        valor_total = data.get('valor_total', None)
+        valor_total_js = json.dumps(valor_total)
+        print(valor_total)
+        return render(request, 'ITGSA/resumen_pago.html', {
+            "valor_total_js": valor_total_js
+        })

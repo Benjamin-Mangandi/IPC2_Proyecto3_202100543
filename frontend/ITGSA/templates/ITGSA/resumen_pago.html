@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <style>
+            .button.is-primary.is-rounded {
+                width: 150px;
+                height: 50px;
+                font-size: 18px;
+            }
+        </style>
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
+        <meta charset="UTF-8">
+        <title>Gráfica de Pagos</title>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    </head>
+    <body>
+        <div id="contenido-pdf" style="width: 70%; margin: auto; padding-top: 50px;">
+            <canvas id="myChart"></canvas>
+        </div>
+        <div style="text-align: center; padding-top: 20px;">
+            <button
+                id="download-pdf"
+                class="button is-primary is-rounded"
+                style="padding: 10px 20px; font-size: 16px;">Descargar PDF</button>
+        </div>
+        <div id="data-container" data-valor-total="{{ valor_total_js|safe }}"></div>
+<script>
+    var valorTotal = JSON.parse(document.getElementById('data-container').getAttribute('data-valor-total'));
+</script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+
+                const data = {
+                    labels: ['Mes Requerido'],
+                    datasets: [
+                        {
+                            label: 'Resumen de Pagos(en miles)',
+                            backgroundColor: 'rgb(255, 99, 132)',
+                            borderColor: 'rgb(255, 99, 132)',
+                            data: [valorTotal]
+                        }
+                    ]
+                };
+
+                const config = {
+                    type: 'bar', // Tipo de gráfica: 'line' para línea, 'bar' para barras, etc.
+                    data: data,
+                    options: {}
+                };
+
+                // Inicializa la gráfica en el elemento canvas
+                const myChart = new Chart(document.getElementById('myChart'), config);
+            });
+        </script>
+        <script>
+            window.onload = function () {
+                document
+                    .getElementById('download-pdf')
+                    .addEventListener('click', function () {
+                        const content = document.getElementById('contenido-pdf');
+                        const {jsPDF} = window.jspdf;
+                        html2canvas(content, {
+                            scale: 2,
+                            useCORS: true,
+                            logging: true
+                        })
+                            .then(canvas => {
+                                var imgData = canvas.toDataURL('image/png');
+                                var doc = new jsPDF({orientation: 'p', unit: 'pt', format: 'a4'});
+                                var pdfWidth = doc
+                                    .internal
+                                    .pageSize
+                                    .getWidth();
+                                var pdfHeight = doc
+                                    .internal
+                                    .pageSize
+                                    .getHeight();
+                                var imgWidth = canvas.width;
+                                var imgHeight = canvas.height;
+                                var widthRatio = pdfWidth / imgWidth;
+                                var heightRatio = pdfHeight / imgHeight;
+                                var ratio = Math.min(widthRatio, heightRatio);
+
+                                var newWidth = imgWidth * ratio;
+                                var newHeight = imgHeight * ratio;
+
+                                var startX = (pdfWidth - newWidth) / 2; // Centrar horizontalmente
+                                var startY = 0
+
+                                doc.addImage(imgData, 'PNG', startX, startY, newWidth, newHeight);
+                                doc.save('Resumen de Pagos.pdf');
+                            })
+                            .catch(error => {
+                                console.error('Error al capturar el contenido para PDF:', error);
+                            });
+                    });
+            };
+        </script>

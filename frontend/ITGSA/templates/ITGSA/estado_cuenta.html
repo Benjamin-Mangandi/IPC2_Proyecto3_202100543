@@ -27,7 +27,10 @@
             html {
                 height: 100%;
                 margin: 0;
-                background-color: #001a4d;
+                background: linear-gradient(to bottom, #0d0d0d 0%, #003399 100%);
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                background-size: cover;
                 color: white;
                 display: flex;
                 justify-content: center;
@@ -47,13 +50,11 @@
                 width: 210px;
                 height: 50px;
                 font-size: 18px;
-                position: fixed;
-                top: 140px;
-                right: 6px;
+
             }
 
             .button.is-danger.is-rounded {
-                background-color:  #e60000;
+                background-color: #e60000;
                 color: white;
                 width: 150px;
                 height: 50px;
@@ -64,26 +65,45 @@
             }
 
             .title.is-2 {
-                color: #00cc00;
+                color: #ff6600;
                 font-style: italic;
+                text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
             }
             .title.is-5 {
-                color: black
+                color: black;
+                text-shadow: -1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white, 1px 1px 0 white;
             }
-            .block,
-            form {
-                margin-top: 20px;
+            .table.table-striped.table-dark {
+                width: 100%;
+                height: 100%;
+            }
+            .block {
+                margin-top: 30px;
                 justify-content: center;
+            }
+            .input.is-warning {
+                width: 250px;
             }
             button,
             input,
             label {
                 margin: 8px;
-                color: yellow;
             }
-            #notification {
-                display: none;
-                color: green;
+            #last {
+                margin-top: 70px;
+                width: 30%;
+            }
+
+            td,
+            th {
+                text-align: center;
+                vertical-align: middle;
+                padding: 5px;
+                border: 1px solid black;
+            }
+            .container {
+                display: flex;
+                flex-direction: column;
             }
 
             .block:not(:last-child) {
@@ -91,7 +111,6 @@
             }
             div.block div {
                 margin-bottom: 20px;
-                /* Espacio entre cada botón */
             }
         </style>
     </head>
@@ -101,7 +120,7 @@
                 <h2 class="title is-2">Estado de Cuenta</h2>
                 <h5 class="title is-5">Nombre:
                     {{cliente.nombre}}</h5>
-                <h5 id="nit"  class="title is-5">NIT:
+                <h5 id="nit" class="title is-5">NIT:
                     {{cliente.nit}}</h5>
                 <h5 class="title is-5">Saldo:
                     {{cliente.saldo}}</h5>
@@ -143,14 +162,33 @@
                     </tbody>
                 </table>
             </div>
-            
+
         </div>
-        <a href="/" class="button is-danger is-rounded">Volver al inicio</a>
-            <button id="download-pdf" class="button is-primary is-rounded">Descargar PDF</button>
-            <button class="button is-link is-rounded">Ver Resumen de Pagos</button>
+        <a href="/clientes" class="button is-danger is-rounded">Volver atras</a>
+        <button id="download-pdf" class="button is-primary is-rounded">Descargar PDF</button>
+        <div id="last">
+            <form id="btn-resumen-pagos" action="" method="get">
+                <div class="field">
+                    <label class="label">Fecha:</label>
+                    <div class="control">
+                        <input
+                            class="input is-warning"
+                            type="text"
+                            name="mes-año"
+                            id="mes-año"
+                            required="required"/>
+                    </div>
+                </div>
+                <button class="button is-link is-rounded">Ver Resumen de Pagos</button>
+            </form>
+        </div>
         <script>
             window.onload = function () {
-                var nit = document.getElementById('nit').textContent.split(':')[1].trim();
+                var nit = document
+                    .getElementById('nit')
+                    .textContent
+                    .split(':')[1]
+                    .trim();
                 document
                     .getElementById('download-pdf')
                     .addEventListener('click', function () {
@@ -185,13 +223,31 @@
                                 var startY = 0
 
                                 doc.addImage(imgData, 'PNG', startX, startY, newWidth, newHeight);
-                                doc.save('estado_de_cuenta'+nit+'.pdf');
+                                doc.save('estado_de_cuenta' + nit + '.pdf');
                             })
                             .catch(error => {
                                 console.error('Error al capturar el contenido para PDF:', error);
                             });
                     });
             };
+        </script>
+        <script type="text/javascript">
+            document.addEventListener('DOMContentLoaded', function () {
+                var form = document.getElementById('btn-resumen-pagos');
+                // Extraemos los parámetros de la URL
+                var queryParams = new URLSearchParams(window.location.search);
+                var nit = queryParams.get('NIT'); // Asegúrate de que el nombre del parámetro coincida exactamente con cómo se pasa en la URL
+
+                if (nit) {
+                    form.action = `/estado_cuenta/${nit}/ResumenPago`;
+                } else {
+                    console.error('NIT no encontrado en la URL');
+                    // Opcionalmente, deshabilitar el botón si no hay NIT
+                    document
+                        .querySelector('button')
+                        .disabled = true;
+                }
+            });
         </script>
     </body>
 </html>

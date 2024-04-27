@@ -6,59 +6,114 @@ from objects.cliente import Cliente
 from objects.factura import Factura
 from objects.pago import Pago
 import os
+from db import *
+from datetime import datetime
 
 app = Flask(__name__)
 CORS(app)
 
+#ARREGLOS
 ClientesRegistrados = []
+NITsRegistrados = []
 BancosRegistrados = []
 FacturasRegistradas = []
 PagosRegistrados = []
 
+def verificar_factura_con_error(factura):
+    global ClientesRegistrados
+    global NITsRegistrados
+    if factura.NITcliente not in NITsRegistrados:
+        return True
+    try:
+        valor = float(factura.valor)
+        if valor < 0:
+            return True
+    except ValueError:
+        return True
+    
+    try:
+        datetime.strptime(factura.fecha, '%d/%m/%Y')
+    except ValueError:
+        return True
+    
+    return False
+
+def verificar_pago_con_error(pago):
+    global ClientesRegistrados
+    global NITsRegistrados
+    if pago.NITcliente not in NITsRegistrados:
+        return True
+    try:
+        valor = float(pago.valor)
+        if valor < 0:
+            return True
+    except ValueError:
+        return True
+    
+    try:
+        datetime.strptime(pago.fecha, '%d/%m/%Y')
+    except ValueError:
+        return True
+    
+    return False
 
 
-def verificar_y_crear_archivos():
-    directorio = './backend'
-    archivos = [os.path.join(directorio, "db.clientes.xml"), os.path.join(directorio, "db.transacciones.xml")]
+#Leer del xml DB
+def agregar_info_clientes(ruta_archivo_clientes):
+    global ClientesRegistrados
+    global BancosRegistrados
+    tree = ET.parse(ruta_archivo_clientes)
+    raiz = tree.getroot()
+    lista_clientes = raiz.find("clientes")
+    lista_bancos = raiz.find("bancos")
+    if lista_clientes is not None:
+        for cliente in lista_clientes:
+            nit = cliente.find("NIT").text.strip()
+            nombre = cliente.find("nombre").text.strip()
+            nuevo_cliente = Cliente(nombre, nit)
+            ClientesRegistrados.append(nuevo_cliente)
+    if lista_bancos is not None:
+        for banco in lista_bancos:
+            codigo = banco.find("codigo").text.strip()
+            nombre = banco.find("nombre").text.strip()
+            nuevo_banco = Banco(nombre, codigo)
+            BancosRegistrados.append(nuevo_banco)
 
-    for archivo in archivos:
-        if not os.path.exists(archivo):
-            print(f"\nEl archivo {archivo} no existe, creando...")
-            root = ET.Element("Base_Datos")
-            tree = ET.ElementTree(root)
-            if 'clientes' in archivo:
-                ET.SubElement(root, 'clientes')
-                ET.SubElement(root, 'bancos')
-            elif 'transacciones' in archivo:
-                ET.SubElement(root, 'facturas')
-                ET.SubElement(root, 'pagos')
-            tree.write(archivo)
-        else:
-            tree = ET.parse(archivo)
-            root = tree.getroot()
-            updated = False
-            if 'clientes' in archivo:
-                if root.find('clientes') is None:
-                    ET.SubElement(root, 'clientes')
-                    updated = True
-                if root.find('bancos') is None:
-                    ET.SubElement(root, 'bancos')
-                    updated = True
-            elif 'transacciones' in archivo:
-                if root.find('facturas') is None:
-                    ET.SubElement(root, 'facturas')
-                    updated = True
-                if root.find('pagos') is None:
-                    ET.SubElement(root, 'pagos')
-                    updated = True
-            if updated:
-                tree.write(archivo)
+def agregar_info_transacciones(ruta_archivo_transacciones):
+    global ClientesRegistrados
+    global BancosRegistrados
+    global FacturasRegistradas
+    global PagosRegistrados
+    tree = ET.parse(ruta_archivo_transacciones)
+    raiz = tree.getroot()
+    lista_pagos = raiz.find("pagos")
+    lista_facturas = raiz.find("facturas")
+    if lista_facturas is not None:
+        for factura in lista_facturas:
+            nit = factura.find("NITcliente").text.strip()
+            for cliente in ClientesRegistrados:
+                if cliente.nit == nit:
+                    numeroFactura = factura.find("numeroFactura").text.strip()
+                    NITcliente = factura.find("NITcliente").text.strip()
+                    fecha = factura.find("fecha").text.strip()
+                    valor = factura.find("valor").text.strip()
+                    nueva_factura = Factura(numeroFactura, NITcliente, fecha, valor)
+                    cliente.transacciones.append(nueva_factura)
+                    FacturasRegistradas.append(nueva_factura)
 
-def limpiar_contenido_xml(*nombres_archivos):
-    for nombre_archivo in nombres_archivos:
-        if os.path.exists(nombre_archivo):
-            with open(nombre_archivo, 'w') as file:
-                file.write('<?xml version="1.0" encoding="UTF-8"?>\n')
+    if lista_pagos is not None:
+        for pago in lista_pagos:
+            nit = pago.find("NITcliente").text.strip()
+            for cliente in ClientesRegistrados:
+                if cliente.nit == nit:
+                    codigoBanco = pago.find("codigoBanco").text.strip()
+                    fecha = pago.find("fecha").text.strip()
+                    NITcliente = pago.find("NITcliente").text.strip()
+                    valor = pago.find("valor").text.strip()
+                    nuevo_pago = Pago(codigoBanco, fecha, NITcliente, valor)
+                    cliente.transacciones.append(nuevo_pago)
+                    PagosRegistrados.append(nuevo_pago)
+    
 
 
 @app.route("/limpiarDatos", methods=["POST"])
@@ -71,9 +126,8 @@ def reinicio():
     BancosRegistrados = []
     FacturasRegistradas = []
     PagosRegistrados = []
-    limpiar_contenido_xml("backend/db.clientes.xml","backend/db.transacciones.xml")
-    respuesta = {"msg": "Se Reinició la Aplicación correctamente", 
-                 "status": 200}
+    limpiar_archivo_clientes("backend/db.clientes.xml")
+    respuesta = {"msg": "Se Reinició la Aplicación correctamente", "status": 200}
     return jsonify(respuesta)
 
 
@@ -105,8 +159,8 @@ def guardar_transaccion():
         fecha = factura.find("fecha").text.strip()
         valor = factura.find("valor").text.strip()
         nueva_factura = Factura(numeroFactura, NITcliente, fecha, valor)
-        if float(valor) < 0:
-            factura_con_error = True
+        
+        factura_con_error = verificar_factura_con_error(nueva_factura)
 
         for factura in FacturasRegistradas:
             if nueva_factura.numeroFactura == factura.numeroFactura:
@@ -119,8 +173,10 @@ def guardar_transaccion():
                     cliente.saldo = cliente.saldo - float(valor)
                     facturasCreadas.append(nueva_factura)
                     FacturasRegistradas.append(nueva_factura)
+                    agregar_factura_DB(nueva_factura,"backend/db.transacciones.xml")
                     break
-                elif factura_duplicada is True:
+                
+        if factura_duplicada is True and factura_con_error is False:
                     facturasDuplicadas.append(nueva_factura)
         if factura_con_error is True:
             facturasConError.append(nueva_factura)
@@ -134,8 +190,7 @@ def guardar_transaccion():
         valor = pago.find("valor").text.strip()
         nuevo_pago = Pago(codigoBanco, fecha, NITcliente, valor)
 
-        if float(valor) < 0:
-            pago_con_error = True
+        pago_con_error = verificar_pago_con_error(nuevo_pago)
 
         for cliente in ClientesRegistrados:
             if cliente.nit == NITcliente:
@@ -153,12 +208,16 @@ def guardar_transaccion():
                 cliente.saldo = cliente.saldo + float(valor)
                 pagosCreados.append(nuevo_pago)
                 PagosRegistrados.append(nuevo_pago)
+                agregar_pago_DB(nuevo_pago, "backend/db.transacciones.xml")
+                break
 
+        if pago_duplicado is True and pago_con_error is False:
+            pagosDuplicados.append(nuevo_pago)
+            
         if pago_con_error is True:
             pagosConError.append(nuevo_pago)
 
-        if pago_duplicado is True:
-            pagosDuplicados.append(nuevo_pago)
+        
 
     respuesta = ET.Element("transacciones")
     facturas_xml = ET.SubElement(respuesta, "facturas")
@@ -190,6 +249,7 @@ def guardar_configuracion():
         return Response("Error al analizar XML", status=400)
     clientes = raiz.find("clientes")
     bancos = raiz.find("bancos")
+
     for cliente in clientes.findall("cliente"):
         actualizacion_cliente = False
         nit = cliente.find("NIT").text.strip()
@@ -198,12 +258,16 @@ def guardar_configuracion():
         for antiguo_cliente in ClientesRegistrados:
             if antiguo_cliente.nit == nuevo_cliente.nit:
                 ClientesActualizados.append(nuevo_cliente)
+                actualizar_cliente_db("backend/db.clientes.xml", nit, nombre)
                 ClientesRegistrados.remove(antiguo_cliente)
                 actualizacion_cliente = True
                 break
         ClientesRegistrados.append(nuevo_cliente)
+        agregar_cliente_DB(nuevo_cliente, "backend/db.clientes.xml")
+        NITsRegistrados.append(nuevo_cliente.nit)
         if actualizacion_cliente is False:
             ClientesCreados.append(nuevo_cliente)
+
     for banco in bancos.findall("banco"):
         actualizacion_banco = False
         codigo = banco.find("codigo").text.strip()
@@ -212,10 +276,12 @@ def guardar_configuracion():
         for antiguo_banco in BancosRegistrados:
             if antiguo_banco.codigo == nuevo_banco.codigo:
                 BancosActualizados.append(nuevo_banco)
+                actualizar_banco_db("backend/db.clientes.xml", codigo, nombre)
                 BancosRegistrados.remove(antiguo_banco)
                 actualizacion_banco = True
                 break
         BancosRegistrados.append(nuevo_banco)
+        agregar_banco_DB(nuevo_banco, "backend/db.clientes.xml")
         if actualizacion_banco is False:
             BancosCreados.append(nuevo_banco)
     respuesta = ET.Element("respuesta")
@@ -243,13 +309,21 @@ def devolver_estado_cuentas():
     return jsonify([cliente.parseDiccionario() for cliente in ClientesRegistrados])
 
 
-@app.route("/devolverResumenPagos", methods=["GET"])
-def devolver_resumen_pagos():
-    respuesta = {"msg": "Devuelto", "status": 200}
-    return jsonify(respuesta)
+@app.route("/estado_cuenta/<nit>/ResumenPago/<fecha>", methods=["GET"])
+def devolver_resumen_pagos(fecha, nit):
+    global ClientesRegistrados
+    valor_total = 0
+    for cliente in ClientesRegistrados:
+        if cliente.nit == nit:
+            for pago in cliente.pagos:
+                valor_total += float(pago.valor)
+        respuesta = {"valor_total": valor_total, "status": 200}
+        return jsonify(respuesta)
 
 
 # INICIAR
 if __name__ == ("__main__"):
     verificar_y_crear_archivos()
+    agregar_info_clientes("backend/db.clientes.xml")
+    agregar_info_transacciones("backend/db.transacciones.xml")
     app.run(port=8880, debug=True)

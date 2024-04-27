@@ -25,56 +25,50 @@
         <style>
             .container {
                 display: flex;
-                flex-direction: column;
-                align-items: center;
-                width: 100%;
+                height: 100vh;
+                width: 100vw;
             }
             body,
             html {
                 height: 100%;
                 margin: 0;
-                background-color: #001a4d;
+                background: linear-gradient(to bottom, #0d0d0d 0%, #003399 100%);
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                background-size: cover;
                 color: white;
                 display: flex;
                 justify-content: center;
                 align-items: flex-start;
             }
 
-            .button.is-primary.is-dark {
+            .button.is-link.is-rounded {
                 width: 300px;
-                /* Ancho del botón */
                 height: 50px;
-                /* Altura del botón */
                 font-size: 18px;
-                /* Tamaño de la fuente del botón */
             }
 
-            .button.is-info.is-dark {
-                width: 300px;
-                /* Ancho del botón */
-                height: 50px;
-                /* Altura del botón */
-                font-size: 18px;
-                /* Tamaño de la fuente del botón */
-            }
-
-            .button.is-danger {
+            .button.is-danger.is-rounded {
                 width: 150px;
                 height: 50px;
                 font-size: 18px;
                 position: fixed;
                 top: 10px;
+                background-color: red;
+                color: white;
                 right: 10px;
             }
 
             .title.is-2 {
                 color: #ff6600;
                 font-style: italic;
+                text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
             }
             .title.is-4 {
                 color: hsl(348, 100%, 61%);
                 justify-content: center;
                 text-align: center;
+                text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
             }
             .block,
             form {
@@ -85,27 +79,26 @@
             input,
             label {
                 margin: 8px;
-                color: yellow;
             }
-            #notification {
-                display: none;
-                color: green;
-            }
+
             .block:not(:last-child) {
                 margin-bottom: 1rem;
             }
-            div.block div {
-                margin-bottom: 20px;
-                /* Espacio entre cada botón */
+            .buttons-container,
+            .respuesta {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
             }
         </style>
     </head>
     <body>
         <div class="container">
-            <div class="block">
+                
+            <div class="buttons-container">
                 <h2 class="title is-2">Carga de Clientes y Bancos</h2>
-            </div>
-            <div class="block">
                 <div>
                     <form
                         action="/configuracion/guardarConfiguracion"
@@ -132,15 +125,18 @@
                         <button
                             id="boton_enviar"
                             type="submit"
-                            class="button is-info is-dark"
+                            class="button is-link is-rounded"
+                            title="Disabled button"
                             disabled="disabled">Enviar</button>
                     </form>
                 </div>
             </div>
-            <div class="block">
+            <div class="respuesta">
                 <h4 class="title is-4">Respuesta:</h4>
-                <textarea readonly="readonly" class="textarea is-warning" rows="14" cols="50">
+                <textarea readonly="readonly" class="textarea is-warning" rows="15" cols="50">
                     {{ respuesta_xml | safe }}</textarea>
-                <a href="/" class="button is-danger">Volver al inicio</a>
+                <a href="/" class="button is-danger is-rounded">Volver al inicio</a>
+            </div>
+        </div>
             </body>
         </html>
