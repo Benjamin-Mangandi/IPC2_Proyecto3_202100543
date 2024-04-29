@@ -3,10 +3,11 @@ from django.http import HttpResponse
 from django.http import JsonResponse
 import xml.etree.ElementTree as ET
 import json
+
 import requests
 from django.views.decorators.csrf import csrf_exempt
 from xml.dom.minidom import parseString
-
+from django.core.serializers.json import DjangoJSONEncoder
 
 def home(request):
     return render(request, 'ITGSA/menu_principal.html')
@@ -44,9 +45,15 @@ def estado_cuenta(request):
     if cliente_nit:
         response = requests.get(f'http://localhost:8880/estado_cuenta/{cliente_nit}')
         if response.status_code == 200:
-            cliente = response.json()
-            return render(request, 'ITGSA/estado_cuenta.html', {'cliente': cliente})
-        else:
+            root = ET.fromstring(response.content)
+            if root.tag == 'error':
+                return render(request, 'ITGSA/cliente_inexistente.html')
+            else:
+                cliente = {child.tag: child.text if child.tag not in ['transacciones', 'pagos'] else
+                               [{subchild.tag: subchild.text for subchild in child} for child in child.findall('item')]
+                               for child in root}
+                return render(request, 'ITGSA/estado_cuenta.html', {'cliente': cliente})
+        elif response.status_code == 400:
             return render(request, 'ITGSA/cliente_inexistente.html')
     else:
         return render(request, 'ITGSA/clientes.html')
@@ -97,12 +104,29 @@ def guardar_transaccion(request):
 @csrf_exempt
 def resumen_pagos(request, nit):
     if request.method == 'GET':
-        fecha = request.GET.get('mes-año', None)
-        response = requests.get(f'http://localhost:8880/estado_cuenta/{nit}/ResumenPago/{fecha}')
-        data = response.json()
-        valor_total = data.get('valor_total', None)
-        valor_total_js = json.dumps(valor_total)
-        print(valor_total)
+        fecha = request.GET.get('mes-anio', None)
+        fecha_formateada = fecha.replace("/","-")
+        try:
+            response = requests.get(f'http://localhost:8880/estado_cuenta/{nit}/ResumenPago/{fecha_formateada}')
+            if response.status_code == 200:
+                try:
+                    data = response.json()
+                except ValueError:
+                    return render(request, 'ITGSA/error_fecha.html', {
+                        'message': 'Respuesta inválida desde el servidor.'
+                    })
+            else:
+                return render(request, 'ITGSA/error_fecha.html', {
+                    'message': 'Error en la respuesta del servidor: Estado {}'.format(response.status_code)
+                })
+
+        except requests.exceptions.RequestException as e:
+            return render(request, 'ITGSA/error_fecha.html', {
+                'message': 'Error al conectar con el servidor: {}'.format(e)
+            })
+        claves_json = json.dumps(list(data.keys()), cls=DjangoJSONEncoder)
+        valores_json = json.dumps(list(data.values()), cls=DjangoJSONEncoder)
         return render(request, 'ITGSA/resumen_pago.html', {
-            "valor_total_js": valor_total_js
+            'meses': claves_json,
+            "valores_totales": valores_json
         })

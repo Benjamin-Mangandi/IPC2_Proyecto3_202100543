@@ -5,9 +5,12 @@ from objects.banco import Banco
 from objects.cliente import Cliente
 from objects.factura import Factura
 from objects.pago import Pago
+from dicttoxml import dicttoxml
+from xml.dom.minidom import parseString
+
 import os
 from db import *
-from datetime import datetime
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 CORS(app)
@@ -16,12 +19,20 @@ CORS(app)
 ClientesRegistrados = []
 NITsRegistrados = []
 BancosRegistrados = []
+CodigosBanco = []
 FacturasRegistradas = []
 PagosRegistrados = []
+
+meses_español = {
+    'Enero': 'January', 'Febrero': 'February', 'Marzo': 'March', 'Abril': 'April',
+    'Mayo': 'May', 'Junio': 'June', 'Julio': 'July', 'Agosto': 'August',
+    'Septiembre': 'September', 'Octubre': 'October', 'Noviembre': 'November', 'Diciembre': 'December'
+}
 
 def verificar_factura_con_error(factura):
     global ClientesRegistrados
     global NITsRegistrados
+ 
     if factura.NITcliente not in NITsRegistrados:
         return True
     try:
@@ -38,10 +49,18 @@ def verificar_factura_con_error(factura):
     
     return False
 
+def obtener_meses_anteriores(fecha, num_meses):
+   
+    meses = [fecha - timedelta(days=30 * i) for i in range(num_meses)]
+    return [(mes.month, mes.year) for mes in meses]
+
 def verificar_pago_con_error(pago):
     global ClientesRegistrados
     global NITsRegistrados
+    global CodigosBanco
     if pago.NITcliente not in NITsRegistrados:
+        return True
+    if pago.codigoBanco not in CodigosBanco:
         return True
     try:
         valor = float(pago.valor)
@@ -78,6 +97,7 @@ def agregar_info_clientes(ruta_archivo_clientes):
             nombre = banco.find("nombre").text.strip()
             nuevo_banco = Banco(nombre, codigo)
             BancosRegistrados.append(nuevo_banco)
+            CodigosBanco.append(nuevo_banco.codigo)
 
 def agregar_info_transacciones(ruta_archivo_transacciones):
     global ClientesRegistrados
@@ -99,7 +119,9 @@ def agregar_info_transacciones(ruta_archivo_transacciones):
                     valor = factura.find("valor").text.strip()
                     nueva_factura = Factura(numeroFactura, NITcliente, fecha, valor)
                     cliente.transacciones.append(nueva_factura)
+                    cliente.saldo-=float(nueva_factura.valor)
                     FacturasRegistradas.append(nueva_factura)
+                    break
 
     if lista_pagos is not None:
         for pago in lista_pagos:
@@ -111,8 +133,10 @@ def agregar_info_transacciones(ruta_archivo_transacciones):
                     NITcliente = pago.find("NITcliente").text.strip()
                     valor = pago.find("valor").text.strip()
                     nuevo_pago = Pago(codigoBanco, fecha, NITcliente, valor)
-                    cliente.transacciones.append(nuevo_pago)
+                    cliente.pagos.append(nuevo_pago)
+                    cliente.saldo+=float(nuevo_pago.valor)
                     PagosRegistrados.append(nuevo_pago)
+                    break
     
 
 
@@ -127,6 +151,7 @@ def reinicio():
     FacturasRegistradas = []
     PagosRegistrados = []
     limpiar_archivo_clientes("backend/db.clientes.xml")
+    limpiar_archivo_transacciones("backend/db.transacciones.xml")
     respuesta = {"msg": "Se Reinició la Aplicación correctamente", "status": 200}
     return jsonify(respuesta)
 
@@ -281,6 +306,7 @@ def guardar_configuracion():
                 actualizacion_banco = True
                 break
         BancosRegistrados.append(nuevo_banco)
+        CodigosBanco.append(nuevo_banco.codigo)
         agregar_banco_DB(nuevo_banco, "backend/db.clientes.xml")
         if actualizacion_banco is False:
             BancosCreados.append(nuevo_banco)
@@ -300,7 +326,13 @@ def devolver_estado_cuenta(nit):
     global ClientesRegistrados
     for cliente in ClientesRegistrados:
         if cliente.nit == nit:
-            return jsonify(cliente.parseDiccionario())
+            #return jsonify(cliente.parseDiccionario())
+            cliente_dict = cliente.parseDiccionario()  # Asegúrate de que este método devuelve un diccionario
+            xml = dicttoxml(cliente_dict, custom_root='cliente', attr_type=False)
+            xml_pretty = parseString(xml).toprettyxml(indent="  ")
+            return app.response_class(xml_pretty, content_type='application/xml')
+    respuesta = {"msg": "Cliente no Encontrado", "status_code": 400}
+    return jsonify(respuesta)
 
 
 @app.route("/EstadosCuentas", methods=["GET"])
@@ -312,12 +344,25 @@ def devolver_estado_cuentas():
 @app.route("/estado_cuenta/<nit>/ResumenPago/<fecha>", methods=["GET"])
 def devolver_resumen_pagos(fecha, nit):
     global ClientesRegistrados
-    valor_total = 0
-    for cliente in ClientesRegistrados:
-        if cliente.nit == nit:
-            for pago in cliente.pagos:
-                valor_total += float(pago.valor)
-        respuesta = {"valor_total": valor_total, "status": 200}
+    fecha_formateada = fecha.replace("-", "/")
+    mes, anio = fecha_formateada.split('/')
+    fecha_formateada = f"{meses_español[mes]}/{anio}"
+    fecha_formateada = datetime.strptime(fecha_formateada, '%B/%Y')
+    meses_a_verificar = obtener_meses_anteriores(fecha_formateada, 3)
+    pagos_por_mes = {f"{mes}/{anio}": [] for mes, anio in meses_a_verificar}
+    try:
+        for cliente in ClientesRegistrados:
+            if cliente.nit == nit:
+                for pago in cliente.pagos:
+                    fecha_pago_formateada = datetime.strptime(pago.fecha, '%d/%m/%Y')
+                    clave_mes_anio = f"{fecha_pago_formateada.month}/{fecha_pago_formateada.year}"
+                    if (fecha_pago_formateada.month, fecha_pago_formateada.year) in meses_a_verificar:
+                        pagos_por_mes[clave_mes_anio].append(float(pago.valor))
+                totales_por_mes = {mes_anio: sum(montos) if montos else 0 for mes_anio, montos in pagos_por_mes.items()}
+        return jsonify(totales_por_mes)
+    except ValueError:
+        respuesta = {"msg": "El formato de la fecha es Incorrecto tiene que ser: mm/yyyy",
+                     "status_code": 400}
         return jsonify(respuesta)
 
 

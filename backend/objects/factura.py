@@ -4,6 +4,8 @@ class Factura:
         self.NITcliente = NITcliente
         self.fecha = fecha
         self.valor = valor
+        self.abono = "NO APLICA"
+        self.codigoBanco = "NO APLICA"
     
     def parseDiccionario(self):
         return {
@@ -11,4 +13,6 @@ class Factura:
             'NITcliente': self.NITcliente,
             'fecha': self.fecha,
             'valor': self.valor,
+            'abono': self.abono,
+            'codigoBanco': self.codigoBanco,
         }

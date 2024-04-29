@@ -57,6 +57,20 @@ def limpiar_archivo_clientes(ruta_archivo):
     
     tree.write(ruta_archivo, encoding='utf-8', xml_declaration=True)
 
+def limpiar_archivo_transacciones(ruta_archivo):
+    tree = ET.parse(ruta_archivo)
+    root = tree.getroot()
+    
+    for facturas in root.findall('facturas'):
+        for factura in list(facturas):
+            facturas.remove(factura)
+            
+    for pagos in root.findall('pagos'):
+        for pago in list(pagos):
+            pagos.remove(pago)
+    
+    tree.write(ruta_archivo, encoding='utf-8', xml_declaration=True)
+
 def agregar_cliente_DB(cliente, ruta_archivo):
     tree = ET.parse(ruta_archivo)
     root = tree.getroot()

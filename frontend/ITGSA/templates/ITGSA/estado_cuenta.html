@@ -140,7 +140,7 @@
                         {% for pago in cliente.pagos %}
                             <tr>
                                 <td>{{ pago.fecha }}</td>
-                                <td>Q.
+                                <td>
                                     {{ pago.cargo | safe}}</td>
                                 <td>Q.
                                     {{ pago.valor }}</td>
@@ -153,7 +153,7 @@
                                 <td>{{ transaccion.fecha }}</td>
                                 <td>Q.
                                     {{ transaccion.valor | safe}}</td>
-                                <td>Q.
+                                <td>
                                     {{ transaccion.abono | safe}}</td>
                                 <td>{{ transaccion.codigoBanco | safe}}</td>
                                 <td>{{ transaccion.numeroFactura }}</td>
@@ -174,8 +174,8 @@
                         <input
                             class="input is-warning"
                             type="text"
-                            name="mes-año"
-                            id="mes-año"
+                            name="mes-anio"
+                            id="mes-anio"
                             required="required"/>
                     </div>
                 </div>
@@ -240,6 +240,7 @@
 
                 if (nit) {
                     form.action = `/estado_cuenta/${nit}/ResumenPago`;
+                    form.target = "_blank";
                 } else {
                     console.error('NIT no encontrado en la URL');
                     // Opcionalmente, deshabilitar el botón si no hay NIT

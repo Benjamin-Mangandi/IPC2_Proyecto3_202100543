@@ -7,6 +7,14 @@
                 height: 50px;
                 font-size: 18px;
             }
+
+            body,
+            html {
+                background: linear-gradient(to bottom, #0d0d0d 0%, #003399 100%);
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                background-size: cover;
+            }
         </style>
         <link
             rel="stylesheet"
@@ -29,32 +37,64 @@
                 class="button is-primary is-rounded"
                 style="padding: 10px 20px; font-size: 16px;">Descargar PDF</button>
         </div>
-        <div id="data-container" data-valor-total="{{ valor_total_js|safe }}"></div>
-<script>
-    var valorTotal = JSON.parse(document.getElementById('data-container').getAttribute('data-valor-total'));
-</script>
         <script>
             document.addEventListener('DOMContentLoaded', function () {
-
+                const meses = JSON.parse('{{ meses|safe }}');
+                const valores = JSON.parse('{{ valores_totales|safe }}');
+                const colores = valores.map((valor, index) => {
+                    const hue = (index * 137) % 360;
+                    return `hsl(${hue}, 70%, 60%)`;
+                });
                 const data = {
-                    labels: ['Mes Requerido'],
+                    labels: meses,
                     datasets: [
                         {
-                            label: 'Resumen de Pagos(en miles)',
-                            backgroundColor: 'rgb(255, 99, 132)',
-                            borderColor: 'rgb(255, 99, 132)',
-                            data: [valorTotal]
+                            label: 'Total en Quetzales (Q.)',
+                            backgroundColor: colores,
+                            borderColor: colores,
+                            data: valores
                         }
                     ]
                 };
 
                 const config = {
-                    type: 'bar', // Tipo de gráfica: 'line' para línea, 'bar' para barras, etc.
+                    type: 'bar', 
                     data: data,
-                    options: {}
-                };
+                    options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Cifras en Quetzales',
+                        color: '#111',
+                        font: {
+                            size: 16 
+                        }
+                    }
+                }
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Resumen de Pagos',
+                    font: {
+                        size: 24 
+                    },
+                    padding: {
+                        top: 10,
+                        bottom: 30
+                    },
+                    color: '#111'
+                },
+                legend: {
+                    display: true,
+                    position: 'top'
+                }
+            }
+        }
+    };
 
-                // Inicializa la gráfica en el elemento canvas
                 const myChart = new Chart(document.getElementById('myChart'), config);
             });
         </script>

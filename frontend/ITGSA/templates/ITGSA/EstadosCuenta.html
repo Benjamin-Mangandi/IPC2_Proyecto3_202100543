@@ -129,7 +129,7 @@
                             {% for pago in cliente.pagos %}
                                 <tr>
                                     <td>{{ pago.fecha }}</td>
-                                    <td>Q.
+                                    <td>
                                         {{ pago.cargo | safe}}</td>
                                     <td>Q.
                                         {{ pago.valor }}</td>
@@ -142,7 +142,7 @@
                                     <td>{{ transaccion.fecha }}</td>
                                     <td>Q.
                                         {{ transaccion.valor | safe}}</td>
-                                    <td>Q.
+                                    <td>
                                         {{ transaccion.abono | safe}}</td>
                                     <td>{{ transaccion.codigoBanco | safe}}</td>
                                     <td>{{ transaccion.numeroFactura }}</td>
@@ -153,7 +153,7 @@
                 </div>
             {% endfor %}
         </div>
-        <a href="/" class="button is-danger is-rounded">Volver al inicio</a>
+        <a href="/clientes" class="button is-danger is-rounded">Volver atras</a>
         <button id="download-pdf" class="button is-primary is-rounded">Descargar PDF</button>
         <script>
             window.onload = function () {
