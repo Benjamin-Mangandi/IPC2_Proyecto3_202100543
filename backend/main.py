@@ -146,8 +146,12 @@ def reinicio():
     global BancosRegistrados
     global FacturasRegistradas
     global PagosRegistrados
+    global NITsRegistrados
+    global CodigosBanco
     ClientesRegistrados = []
+    CodigosBanco = []
     BancosRegistrados = []
+    NITsRegistrados = []
     FacturasRegistradas = []
     PagosRegistrados = []
     limpiar_archivo_clientes("backend/db.clientes.xml")
