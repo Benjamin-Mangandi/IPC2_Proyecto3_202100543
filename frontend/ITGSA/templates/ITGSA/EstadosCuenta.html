@@ -130,11 +130,11 @@
                                 <tr>
                                     <td>{{ pago.fecha }}</td>
                                     <td>
-                                        {{ pago.cargo | safe}}</td>
+                                        NO APLICA</td>
                                     <td>Q.
                                         {{ pago.valor }}</td>
                                     <td>{{ pago.codigoBanco }}</td>
-                                    <td>{{ pago.factura | safe}}</td>
+                                    <td>No APLICA</td>
                                 </tr>
                             {% endfor %}
                             {% for transaccion in cliente.transacciones %}
@@ -143,8 +143,8 @@
                                     <td>Q.
                                         {{ transaccion.valor | safe}}</td>
                                     <td>
-                                        {{ transaccion.abono | safe}}</td>
-                                    <td>{{ transaccion.codigoBanco | safe}}</td>
+                                        NO APLICA</td>
+                                    <td>NO APLICA</td>
                                     <td>{{ transaccion.numeroFactura }}</td>
                                 </tr>
                             {% endfor %}

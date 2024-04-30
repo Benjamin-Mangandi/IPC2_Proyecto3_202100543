@@ -8,7 +8,6 @@ from objects.pago import Pago
 from dicttoxml import dicttoxml
 from xml.dom.minidom import parseString
 
-import os
 from db import *
 from datetime import datetime, timedelta
 
@@ -24,9 +23,9 @@ FacturasRegistradas = []
 PagosRegistrados = []
 
 meses_español = {
-    'Enero': 'January', 'Febrero': 'February', 'Marzo': 'March', 'Abril': 'April',
-    'Mayo': 'May', 'Junio': 'June', 'Julio': 'July', 'Agosto': 'August',
-    'Septiembre': 'September', 'Octubre': 'October', 'Noviembre': 'November', 'Diciembre': 'December'
+    'enero': 'January', 'febrero': 'February', 'marzo': 'March', 'abril': 'April',
+    'mayo': 'May', 'junio': 'June', 'julio': 'July', 'agosto': 'August',
+    'septiembre': 'September', 'octubre': 'October', 'noviembre': 'November', 'diciembre': 'December'
 }
 
 def verificar_factura_con_error(factura):
@@ -77,7 +76,7 @@ def verificar_pago_con_error(pago):
     return False
 
 
-#Leer del xml DB
+#Leer de la db los clientes
 def agregar_info_clientes(ruta_archivo_clientes):
     global ClientesRegistrados
     global BancosRegistrados
@@ -348,7 +347,8 @@ def devolver_estado_cuentas():
 @app.route("/estado_cuenta/<nit>/ResumenPago/<fecha>", methods=["GET"])
 def devolver_resumen_pagos(fecha, nit):
     global ClientesRegistrados
-    fecha_formateada = fecha.replace("-", "/")
+    fecha_formateada = fecha.lower()
+    fecha_formateada = fecha_formateada.replace("-", "/")
     mes, anio = fecha_formateada.split('/')
     fecha_formateada = f"{meses_español[mes]}/{anio}"
     fecha_formateada = datetime.strptime(fecha_formateada, '%B/%Y')
