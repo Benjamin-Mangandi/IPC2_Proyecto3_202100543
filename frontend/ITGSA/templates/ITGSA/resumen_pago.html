@@ -10,7 +10,7 @@
 
             body,
             html {
-                background: linear-gradient(to bottom, #ffb84d 0%, #ffe0b3 100%);
+                background: linear-gradient(to bottom, #33ffff 0%, #b3ffff 100%);
                 background-repeat: no-repeat;
                 background-attachment: fixed;
                 background-size: cover;
@@ -45,49 +45,49 @@
                 console.log(meses)
                 console.log(datosChart)
                 console.log(bancos)
-                const datasets = bancos.map((banco, index) => ({
-                label: banco,
-                backgroundColor: getRandomColor(index),
-                data: datosChart[banco]
-            }));
+                const datasets = bancos.map(
+                    (banco, index) => ({label: banco, backgroundColor: getRandomColor(index), data: datosChart[banco]})
+                );
 
-            function getRandomColor(index) {
-                const hues = [210, 10, 130, 250, 310]; // Color hues for distinction
-                return `hsl(${hues[index % hues.length]}, 70%, 60%)`;
-            }
+                function getRandomColor(index) {
+                    const hues = [210, 10, 130, 250, 310];
+                    return `hsl(${hues[index % hues.length]}, 70%, 60%)`;
+                }
 
-            const ctx = document.getElementById('myChart').getContext('2d');
-            const myChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: meses,
-                    datasets: datasets
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        },
-                        x: {
-                            stacked: false  // Set to false for grouped bars
-                        }
+                const ctx = document
+                    .getElementById('myChart')
+                    .getContext('2d');
+                const myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: meses,
+                        datasets: datasets
                     },
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'top'
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            },
+                            x: {
+                                stacked: false
+                            }
                         },
-                        title: {
-                            display: true,
-                            text: 'Ingresos por Banco (Montos en Quetzales)',
-                            font: {
-                                size: 24
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Ingresos por Banco (Montos en Quetzales)',
+                                font: {
+                                    size: 24
+                                }
                             }
                         }
                     }
-                }
+                });
             });
-        });
         </script>
         <script>
             window.onload = function () {
@@ -121,7 +121,7 @@
                                 var newWidth = imgWidth * ratio;
                                 var newHeight = imgHeight * ratio;
 
-                                var startX = (pdfWidth - newWidth) / 2; // Centrar horizontalmente
+                                var startX = (pdfWidth - newWidth) / 2;
                                 var startY = 0
 
                                 doc.addImage(imgData, 'PNG', startX, startY, newWidth, newHeight);

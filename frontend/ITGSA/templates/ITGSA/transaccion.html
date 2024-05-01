@@ -19,7 +19,7 @@
 
             function habilitarBotonEnviar(input) {
                 const botonEnviar = document.getElementById('boton_enviar');
-                botonEnviar.disabled = !input.files[0]; // Deshabilita el botón si no hay archivo seleccionado
+                botonEnviar.disabled = !input.files[0]; // Deshabilita el botón si no hay un archivo seleccionado
             }
         </script>
         <style>
@@ -96,13 +96,12 @@
             }
             div.block div {
                 margin-bottom: 20px;
-                /* Espacio entre cada botón */
             }
         </style>
     </head>
     <body>
         <div class="container">
-            
+
             <div class="buttons-container">
                 <h2 class="title is-2">Carga de Transacciones</h2>
                 <form
@@ -138,7 +137,7 @@
             <div class="respuesta">
                 <h4 class="title is-4">Respuesta:</h4>
                 <textarea readonly="readonly" class="textarea is-warning" rows="15" cols="50">
-                    {{ respuesta_xml | safe }}</textarea>  
+                    {{ respuesta_xml | safe }}</textarea>
             </div>
         </div>
         <a href="/" class="button is-danger is-rounded">Volver al inicio</a>

@@ -8,17 +8,14 @@
         <title>Industria Típica Guatemalteca, S.A.</title>
         <script>
             document.addEventListener('DOMContentLoaded', function () {
-                // Captura el evento click del botón de reiniciar datos
                 document
                     .getElementById('btn-reiniciar-datos')
                     .addEventListener('click', function (event) {
-                        // Muestra una ventana de confirmación
                         var confirmar = confirm(
                             '¿Estás seguro de que quieres reiniciar los datos?\nEsta acción no se puede des' +
                             'hacer.'
                         );
 
-                        // Si el usuario confirma, envía el formulario
                         if (!confirmar) {
                             event.preventDefault(); // Evita el envío del formulario si el usuario cancela
                         }

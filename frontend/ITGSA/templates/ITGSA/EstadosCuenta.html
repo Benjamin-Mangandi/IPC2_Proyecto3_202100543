@@ -98,7 +98,6 @@
             }
             div.block div {
                 margin-bottom: 20px;
-                /* Espacio entre cada botón */
             }
         </style>
     </head>
@@ -187,7 +186,7 @@
                                 var newWidth = imgWidth * ratio;
                                 var newHeight = imgHeight * ratio;
 
-                                var startX = (pdfWidth - newWidth) / 2; // Centrar horizontalmente
+                                var startX = (pdfWidth - newWidth) / 2;
                                 var startY = 0
 
                                 doc.addImage(imgData, 'PNG', startX, startY, newWidth, newHeight);

@@ -203,7 +203,7 @@
                                 var newWidth = imgWidth * ratio;
                                 var newHeight = imgHeight * ratio;
 
-                                var startX = (pdfWidth - newWidth) / 2; // Centrar horizontalmente
+                                var startX = (pdfWidth - newWidth) / 2;
                                 var startY = 0
 
                                 doc.addImage(imgData, 'PNG', startX, startY, newWidth, newHeight);
@@ -218,16 +218,14 @@
         <script type="text/javascript">
             document.addEventListener('DOMContentLoaded', function () {
                 var form = document.getElementById('btn-resumen-pagos');
-                // Extraemos los parámetros de la URL
                 var queryParams = new URLSearchParams(window.location.search);
-                var nit = queryParams.get('NIT'); // Asegúrate de que el nombre del parámetro coincida exactamente con cómo se pasa en la URL
+                var nit = queryParams.get('NIT');
 
                 if (nit) {
                     form.action = `/estado_cuenta/${nit}/ResumenPago`;
                     form.target = "_blank";
                 } else {
                     console.error('NIT no encontrado en la URL');
-                    // Opcionalmente, deshabilitar el botón si no hay NIT
                     document
                         .querySelector('button')
                         .disabled = true;
