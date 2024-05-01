@@ -65,7 +65,7 @@
                 <h2 class="title is-2">Clientes</h2>
             </div>
             <div class="block">
-                <form action="{% url 'estado_cuenta' %}" method="get">
+                <form action="{% url 'estado_cuenta' %}"  method="get">
                     <div class="field">
                         <label class="label">NIT</label>
                         <div class="control">
@@ -78,6 +78,20 @@
                         </div>
                     </div>
                     <button type="submit" class="button is-primary is-rounded">Ver estado de cuenta</button>
+                </form>
+                <form action="clientes/ResumendePagos" target="_blank"  method="get">
+                    <div class="field">
+                        <label class="label">Mes: Ejemplo(Abril/2024)</label>
+                        <div class="control">
+                            <input
+                                class="input is-warning"
+                                type="text"
+                                name="MES"
+                                id="MES"
+                                required="required"/>
+                        </div>
+                    </div>
+                    <button type="submit" class="button is-primary is-rounded">Ver Resumen de Pagos</button>
                 </form>
                 <form action="/EstadosCuenta" method="get">
                     <button type="getClientes" class="button is-link is-rounded">Ver estado de todos los clientes</button>

@@ -4,6 +4,7 @@ class Pago:
         self.fecha = fecha
         self.NITcliente = NITcliente
         self.valor = valor
+        self.nombreBanco = None
 
     def parseDiccionario(self):
         return {

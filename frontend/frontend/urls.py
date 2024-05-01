@@ -30,7 +30,7 @@ urlpatterns = [
     path('Ayuda', views.ayuda, name='ayuda'),
     path('clientes', views.clientes, name='clientes'),
     path('estado_cuenta/', views.estado_cuenta, name='estado_cuenta'),
-    path('estado_cuenta/<str:nit>/ResumenPago', views.resumen_pagos, name='resumen_pagos'),
     path('EstadosCuenta', views.EstadosCuenta, name='EstadosCuenta'),
+    path('clientes/ResumendePagos', views.ResumenPagos, name='ResumenPagos'),
 ]
 

@@ -141,11 +141,11 @@
                             <tr>
                                 <td>{{ pago.fecha }}</td>
                                 <td>
-                                    {{ pago.cargo | safe}}</td>
+                                    NO APLICA</td>
                                 <td>Q.
                                     {{ pago.valor }}</td>
                                 <td>{{ pago.codigoBanco }}</td>
-                                <td>{{ pago.factura | safe}}</td>
+                                <td>NO APLICA</td>
                             </tr>
                         {% endfor %}
                         {% for transaccion in cliente.transacciones %}
@@ -154,8 +154,8 @@
                                 <td>Q.
                                     {{ transaccion.valor | safe}}</td>
                                 <td>
-                                    {{ transaccion.abono | safe}}</td>
-                                <td>{{ transaccion.codigoBanco | safe}}</td>
+                                    NO APLICA</td>
+                                <td>NO APLICA</td>
                                 <td>{{ transaccion.numeroFactura }}</td>
                             </tr>
                         {% endfor %}
@@ -166,22 +166,6 @@
         </div>
         <a href="/clientes" class="button is-danger is-rounded">Volver atras</a>
         <button id="download-pdf" class="button is-primary is-rounded">Descargar PDF</button>
-        <div id="last">
-            <form id="btn-resumen-pagos" action="" method="get">
-                <div class="field">
-                    <label class="label">Fecha:</label>
-                    <div class="control">
-                        <input
-                            class="input is-warning"
-                            type="text"
-                            name="mes-anio"
-                            id="mes-anio"
-                            required="required"/>
-                    </div>
-                </div>
-                <button class="button is-link is-rounded">Ver Resumen de Pagos</button>
-            </form>
-        </div>
         <script>
             window.onload = function () {
                 var nit = document
